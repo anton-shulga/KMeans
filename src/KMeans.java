@@ -26,10 +26,9 @@ public class KMeans {
     public void setCountOfClasses(int countOfClasses){
         this.countOfClasses = countOfClasses;
     }
-    //Initializes the process
+
     public void createPoints() {
         points = Point.createRandomPoints(countOfPoints, screenSize.getWidth(), screenSize.getHeight());
-
         for (int i = 0; i < countOfClasses; i++) {
             Cluster cluster = new Cluster(getRandomColor());
             Point centroid = Point.createRandomPoint(screenSize.getWidth(), screenSize.getHeight());
@@ -41,36 +40,22 @@ public class KMeans {
     }
 
     private Color getRandomColor() {
-
         Random random = new Random();
-
         int r = random.nextInt(255);
         int g = random.nextInt(255);
         int b = random.nextInt(255);
-
         return new Color(r, g, b);
     }
 
-
-
-
     public void calculate() {
-
         boolean finish = false;
 
-
         while (!finish) {
-
             clearClusters();
-
             List<Point> lastCentroids = getCentroids();
-
-            assignCluster();
-
-            calculateCentroids();
-
+            assignClusters();
+            setNewCentroids();
             List<Point> currentCentroids = getCentroids();
-
             double distance = 0;
             for (int i = 0; i < lastCentroids.size(); i++) {
                 distance += Point.distance(lastCentroids.get(i), currentCentroids.get(i));
@@ -88,8 +73,6 @@ public class KMeans {
         }
     }
 
-
-
     private List<Point> getCentroids() {
         List centroids = new ArrayList(countOfClasses);
         for (Cluster cluster : clusters) {
@@ -100,7 +83,8 @@ public class KMeans {
         return centroids;
     }
 
-    private void assignCluster() {
+    private void assignClusters() {
+
         double max = Double.MAX_VALUE;
         double min = max;
         Color clusterColor = null;
@@ -125,7 +109,7 @@ public class KMeans {
     }
 
 
-    private void calculateCentroids() {
+    private void setNewCentroids() {
         List<CentroidThread> listOfThreads = new ArrayList<CentroidThread>(clusters.size());
         for (Cluster cluster : clusters) {
             CentroidThread thread = new CentroidThread(cluster);
